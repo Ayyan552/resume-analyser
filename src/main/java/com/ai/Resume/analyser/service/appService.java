@@ -110,14 +110,21 @@ public class appService {
                 "}\n"
 
         )).build();
-        while (true){
+        int maxRetries = 3;
+        int attempt = 0;
+        while (attempt < maxRetries){
             try{
-                GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash",content, GenerateContentConfig.builder().temperature(0.0f).build());
+                GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", content, GenerateContentConfig.builder().temperature(0.0f).build());
                 results = response.text();
                 break;
             } catch (Exception e) {
-                Thread.sleep(1500);
-                System.out.println(e);
+                attempt++;
+                System.out.println("Attempt " + attempt + " failed: " + e);
+                if(attempt < maxRetries){
+                    Thread.sleep(60000);
+                } else {
+                    return new ResponseEntity<>("Service temporarily unavailable. Please try again later.", HttpStatus.SERVICE_UNAVAILABLE);
+                }
             }
         }
         if ( results.startsWith("```")) {
