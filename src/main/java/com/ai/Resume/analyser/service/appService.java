@@ -114,7 +114,7 @@ public class appService {
         int attempt = 0;
         while (attempt < maxRetries){
             try{
-                GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", content, GenerateContentConfig.builder().temperature(0.0f).build());
+                GenerateContentResponse response = client.models.generateContent("gemini-2.0-flash", content, GenerateContentConfig.builder().temperature(0.0f).build());
                 results = response.text();
                 break;
             } catch (Exception e) {
