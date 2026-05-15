@@ -112,18 +112,32 @@ public class appService {
         )).build();
         int maxRetries = 3;
         int attempt = 0;
-        while (attempt < maxRetries){
-            try{
-                GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash-preview-04-17", content, GenerateContentConfig.builder().temperature(0.0f).build());
+        while (attempt < maxRetries) {
+            try {
+                // Using the stable model alias
+                GenerateContentResponse response = client.models.generateContent(
+                        "gemini-2.5-flash",
+                        content,
+                        GenerateContentConfig.builder().temperature(0.0f).build()
+                );
                 results = response.text();
                 break;
             } catch (Exception e) {
                 attempt++;
-                System.out.println("Attempt " + attempt + " failed: " + e);
-                if(attempt < maxRetries){
-                    Thread.sleep(60000);
+                String errorMsg = e.toString();
+                System.err.println("Attempt " + attempt + " failed: " + errorMsg);
+
+                // If the error is NOT a rate limit (429), don't bother retrying 60s
+                // because it's likely a code or credential issue.
+                if (!errorMsg.contains("429") && !errorMsg.contains("Quota")) {
+                    return new ResponseEntity<>("AI Configuration Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+
+                if (attempt < maxRetries) {
+                    // 20 seconds is a good balance between speed and clearing the 5 RPM quota
+                    Thread.sleep(20000);
                 } else {
-                    return new ResponseEntity<>("Service temporarily unavailable. Please try again later.", HttpStatus.SERVICE_UNAVAILABLE);
+                    return new ResponseEntity<>("The AI service is currently overloaded. Please try again in a few moments.", HttpStatus.SERVICE_UNAVAILABLE);
                 }
             }
         }
