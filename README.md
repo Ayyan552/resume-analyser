@@ -1,5 +1,5 @@
 # Resume Analyzer          
-[![Live App](https://img.shields.io/badge/Live-App-brightgreen)](https://resume-analyser-kp0f.onrender.com/)
+[![Live App](https://img.shields.io/badge/Live-App-brightgreen)]()
 
 
 
@@ -52,7 +52,7 @@ This project integrates **Google Gemini AI** for resume analysis and includes se
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/Mohamed-Imran-12/Resume-Analyser.git
+git clone https://github.com/Ayyan552/resume-analyser.git
 ```
 
 #### 2. Open Project in IDE
